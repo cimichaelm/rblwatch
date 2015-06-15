@@ -134,7 +134,7 @@ class RBLSearch(object):
         self.resolver = Resolver()
         self.resolver.timeout = 0.2
         self.resolver.lifetime = 1.0
-        self.debug = True
+        self.debug = False
 
     def search(self):
         if self._listed is not None:
@@ -162,11 +162,13 @@ class RBLSearch(object):
         listed = self.listed
         print("")
         print("--- DNSBL Report for %s ---" % listed['SEARCH_HOST'])
+        count = 0
         for key in listed:
             if key == 'SEARCH_HOST':
                 continue
             if not listed[key].get('ERROR'):
                 if listed[key]['LISTED']:
+                    count += 1
                     print("Results for %s: %s" % (key, listed[key]['LISTED']))
                     print("  + Host information: %s" % \
                           (listed[key]['HOST']))
@@ -177,6 +179,8 @@ class RBLSearch(object):
                 if self.debug:
                     print "*** Error {0} contacting {1}***".format(str(listed[key]['ERRORTYPE']), key)
                 pass
+        if count == 0:
+            print("No entries found")
 
 if __name__ == "__main__":
     # Tests!
