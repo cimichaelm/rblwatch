@@ -97,9 +97,12 @@ class Lookup(Thread):
         self.listed = listed
         self.dnslist = dnslist
         self.resolver = resolver
+        self.debug = False;
 
     def run(self):
         try:
+            if self.debug:
+                print("Checking: %s\n" % self.host)
             host_record = self.resolver.query(self.host, "A")
             if len(host_record) > 0:
                 self.listed[self.dnslist]['LISTED'] = True
@@ -131,6 +134,7 @@ class RBLSearch(object):
         self.resolver = Resolver()
         self.resolver.timeout = 0.2
         self.resolver.lifetime = 1.0
+        self.debug = True
 
     def search(self):
         if self._listed is not None:
@@ -170,7 +174,8 @@ class RBLSearch(object):
                     print("    + Additional information: %s" % \
                           (listed[key]['TEXT']))
             else:
-                #print "*** Error contacting %s ***" % key
+                if self.debug:
+                    print "*** Error {0} contacting {1}***".format(str(listed[key]['ERRORTYPE']), key)
                 pass
 
 if __name__ == "__main__":
